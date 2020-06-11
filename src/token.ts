@@ -67,12 +67,13 @@ const beforeExpr = { beforeExpr: true },
 export const AllTokens: {
   [name: string]: TokenType;
 } = {
+  name: new TokenType("name", startsExpr),
   num: new TokenType("num", startsExpr),
   regexp: new TokenType("regexp", startsExpr),
   string: new TokenType("string", startsExpr),
   eof: new TokenType("eof"), // 结束符token
 
-  // Punctuation Token -- 实在不知道怎么翻译
+  // 分隔符Token
   bracketL: new TokenType("[", { beforeExpr: true, startsExpr: true }),
   bracketR: new TokenType("]"),
   braceL: new TokenType("{", { beforeExpr: true, startsExpr: true }),
@@ -93,7 +94,7 @@ export const AllTokens: {
 
   // 操作符Token. 这些操作符的属性可以帮助parser合适地去解析它
   eq: new TokenType("=", { beforeExpr: true, isAssign: true }),
-  assign: new TokenType("_=", { beforeExpr: true, isAssign: true }),
+  assign: new TokenType("_=", { beforeExpr: true, isAssign: true }), // 用_=代替+=, -=, *=, /=, %=等等
   incDec: new TokenType("++/--", {
     prefix: true,
     postfix: true,
