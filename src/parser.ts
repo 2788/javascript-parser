@@ -19,6 +19,7 @@ export class Parser {
   skipBlockComment!: () => void;
   skipSpace!: () => void;
   finishToken!: () => void;
+  readOp!: () => void;
   constructor(input: string) {
     this.input = input;
   }

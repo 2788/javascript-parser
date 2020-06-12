@@ -26,7 +26,9 @@ import { isNewLineChar, nonASCIIwhitespace } from "./utils";
 
 Parser.prototype.readToken = function () {};
 
-Parser.prototype.readNumber = function () {};
+Parser.prototype.readNumber = function () {
+    
+};
 
 Parser.prototype.readString = function () {};
 
@@ -37,6 +39,8 @@ Parser.prototype.readRegexp = function () {};
 Parser.prototype.readKeyWords = function () {};
 
 Parser.prototype.readPunctuations = function () {};
+
+Parser.prototype.readOp = function () {};
 
 Parser.prototype.skipLineComment = function () {
   let ch = this.input[this.pos];
@@ -59,7 +63,7 @@ Parser.prototype.skipBlockComment = function () {
 // 跳过所有空白,注释,换行
 // https://ecma262.docschina.org/#sec-white-space
 // 空白符的定义: <TAB> <VT> <FF> <SP> <NBSP> <ZWNBSP> <USP>
-// <TAB> => \u0009(9)  <VT> => \u000B(11)  <FF> => \u000C(12)  <SP> => \u00020(32)
+// <TAB> => \u0009(9)  <VT> => \u000B(11)  <FF> => \u000C(12)  <SP> => \u0020(32)
 // <NBSP> => \u00A0(160) <ZWNBSP> => \uFEFF  <USP> => 是一个类别, 参考nonASCIIwhitespace
 //
 // https://ecma262.docschina.org/#sec-line-terminators
@@ -106,10 +110,7 @@ Parser.prototype.skipSpace = function () {
 
       default:
         // 9-13码点 或者 <USP>码点类别
-        if (
-          (ch > 8 && ch < 14) ||
-          nonASCIIwhitespace.test(String.fromCharCode(ch))
-        ) {
+        if ((ch > 8 && ch < 14) || nonASCIIwhitespace.test(String.fromCharCode(ch))) {
           ++this.pos;
         } else {
           return; // 结束函数
@@ -119,3 +120,5 @@ Parser.prototype.skipSpace = function () {
 };
 
 Parser.prototype.finishToken = function () {};
+
+
