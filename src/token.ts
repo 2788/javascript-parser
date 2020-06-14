@@ -1,6 +1,10 @@
 export class Token {
-  type!: string;
+  type!: TokenType;
   value: string | number | RegExp | undefined;
+  constructor(type: TokenType, value: string | number | RegExp | undefined) {
+    this.type = type;
+    this.value = value;
+  }
 }
 
 //  `beforeExpr`用来消除正则表达式和除号的, 所有能后接一个表达式的token会被设置这个属性.
@@ -56,16 +60,95 @@ function binop(label: string, value: number): TokenType {
   return new TokenType(label, { binop: value });
 }
 
+export const AllLabelsOfKeyWords: String[] = [];
+
 function kw(label: string, properties: Partial<TokenType> = {}) {
   properties.keyword = true;
+  AllLabelsOfKeyWords.push(label);
   return new TokenType(label, properties);
 }
 
 const beforeExpr = { beforeExpr: true },
   startsExpr = { startsExpr: true };
 
+export type TokenLiteral =
+  | "name"
+  | "num"
+  | "regexp"
+  | "string"
+  | "eof"
+  | "bracketL"
+  | "bracketR"
+  | "braceL"
+  | "braceR"
+  | "parenL"
+  | "parenR"
+  | "comma"
+  | "semi"
+  | "colon"
+  | "dot"
+  | "question"
+  | "arrow"
+  | "template"
+  | "invalidTemplate"
+  | "ellipsis"
+  | "backQuote"
+  | "dollarBraceL"
+  | "eq"
+  | "assign"
+  | "incDec"
+  | "prefix"
+  | "logicalOR"
+  | "logicalAND"
+  | "bitwiseOR"
+  | "bitwiseXOR"
+  | "bitwiseAND"
+  | "equality"
+  | "relational"
+  | "bitShift"
+  | "plusMin"
+  | "modulo"
+  | "star"
+  | "slash"
+  | "starstar"
+  | "_break"
+  | "_case"
+  | "_catch"
+  | "_continue"
+  | "_debugger"
+  | "_default"
+  | "_do"
+  | "_else"
+  | "_finally"
+  | "_for"
+  | "_function"
+  | "_if"
+  | "_return"
+  | "_switch"
+  | "_throw"
+  | "_try"
+  | "_var"
+  | "_const"
+  | "_while"
+  | "_with"
+  | "_new"
+  | "_this"
+  | "_super"
+  | "_class"
+  | "_extends"
+  | "_export"
+  | "_import"
+  | "_null"
+  | "_true"
+  | "_false"
+  | "_in"
+  | "_instanceof"
+  | "_typeof"
+  | "_void"
+  | "_delete";
+
 export const AllTokens: {
-  [name: string]: TokenType;
+  [name in TokenLiteral]: TokenType;
 } = {
   name: new TokenType("name", startsExpr),
   num: new TokenType("num", startsExpr),

@@ -9,21 +9,28 @@ export class Parser {
   end: number = 0; // 当前token结束位置
   tokenArr: Token[] = [];
   readToken!: () => void;
+  readIdentifierOrKW!: () => void;
   readNumber!: () => void;
   readString!: () => void;
-  readName!: () => void;
   readRegexp!: () => void;
-  readKeyWords!: () => void;
   readPunctuations!: () => void;
   skipLineComment!: () => void;
   skipBlockComment!: () => void;
   skipSpace!: () => void;
   finishToken!: () => void;
   readOp!: () => void;
+  fullCodePointAtPos!: () => number;
+  readUnicodeEscapeSequence!: () => string | never;
+  readHex4Digits!: () => number | never;
+  readHexDigits!: () => void;
+  readCodePoint!: () => number | never;
+  readDecimalLiteral!: () => void;
+  readOtherRadixLiteral!: (radix: number) => void;
+  readEscapeSequence!: () => string | never;
   constructor(input: string) {
     this.input = input;
   }
-  raise(info: string) {
+  raise(info: string): never {
     info = `${info} (${this.line}:${this.col})`;
     throw new SyntaxError(info);
   }
