@@ -1,11 +1,4 @@
-export class Token {
-  type!: TokenType;
-  value: string | number | RegExp | undefined;
-  constructor(type: TokenType, value: string | number | RegExp | undefined) {
-    this.type = type;
-    this.value = value;
-  }
-}
+
 
 //  `beforeExpr`用来消除正则表达式和除号的, 所有能后接一个表达式的token会被设置这个属性.
 //  因此如果一个`/`跟着这种token后面,就是正则表达式
@@ -244,3 +237,6 @@ export const AllTokens: {
   _void: kw("void", { beforeExpr: true, prefix: true, startsExpr: true }),
   _delete: kw("delete", { beforeExpr: true, prefix: true, startsExpr: true }),
 };
+
+
+

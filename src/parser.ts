@@ -1,37 +1,71 @@
-import { Token } from "./token";
+import { Lexer } from "./lexer";
+import * as ESTree from "./estree";
+import { parseStatementList } from "./statement";
+import { Token, ParseContext } from "./types";
 
 export class Parser {
-  input: string;
-  line: number = 1;
-  col: number = 1;
-  pos: number = 0; // 输入流指针
-  start: number = 0; // 当前token起始位置
-  end: number = 0; // 当前token结束位置
-  tokenArr: Token[] = [];
-  readToken!: () => void;
-  readIdentifierOrKW!: () => void;
-  readNumber!: () => void;
-  readString!: () => void;
-  readRegexp!: () => void;
-  readPunctuations!: () => void;
-  skipLineComment!: () => void;
-  skipBlockComment!: () => void;
-  skipSpace!: () => void;
-  finishToken!: () => void;
-  readOp!: () => void;
-  fullCodePointAtPos!: () => number;
-  readUnicodeEscapeSequence!: () => string | never;
-  readHex4Digits!: () => number | never;
-  readHexDigits!: () => void;
-  readCodePoint!: () => number | never;
-  readDecimalLiteral!: () => void;
-  readOtherRadixLiteral!: (radix: number) => void;
-  readEscapeSequence!: () => string | never;
-  constructor(input: string) {
-    this.input = input;
+  private lexer: Lexer;
+  private currentToken: Token | null = null;
+  private context: ParseContext = ParseContext.None;
+  private labelSet: string[] = [];
+  constructor(sourceCode: string) {
+    this.lexer = new Lexer(sourceCode);
+  }
+
+  parseSource(): ESTree.Program {
+    this.readToken();
+    let body = parseStatementList(this);
+    const node: ESTree.Program = {
+      type: "Program",
+      sourceType: "script",
+      body,
+    };
+    return node;
+  }
+
+  readToken(): Token {
+    return this.currentToken = this.lexer.readToken();
+  }
+
+  setParseContext(context: number) {
+    this.context = context;
+  }
+
+  getParseContext() {
+    return this.context;
+  }
+
+  enableParseContext(context: ParseContext) {
+    this.context |= context;
+  }
+
+  disableParseContext(context: ParseContext) {
+    this.context &= ~context;
+  }
+
+  add2LabelSet(label: string) {
+    this.labelSet.push(label);
+  }
+  popLabelSet(){
+    this.labelSet.pop();
+  }
+  setLabelSet(labelSet: string[]) {
+    this.labelSet = labelSet;
+  }
+  getLabelSet() {
+    return this.labelSet;
+  }
+
+  getCurrentToken(): Token | never {
+    if (this.currentToken === null) {
+      throw new Error("not read token yet");
+    }
+    return this.currentToken;
+  }
+  reReadDivisionToken(): Token {
+    return this.currentToken = this.lexer.reReadDivisionToken(this.getCurrentToken());
   }
   raise(info: string): never {
-    info = `${info} (${this.line}:${this.col})`;
-    throw new SyntaxError(info);
+    return this.lexer.raise(info);
   }
 }
